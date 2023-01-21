@@ -286,12 +286,19 @@
                       <p class="text-sm mb-0 text-capitalize font-weight-bold">
                         Moisture Level
                       </p>
-                      <h5 class="font-weight-bolder mb-0">
-                        $53,000
-                        <span class="text-success text-sm font-weight-bolder"
-                          >Adequate</span
-                        >
-                      </h5>
+                      {% if moisture == "Adequate" %}
+                        <h5 class="font-weight-bolder mb-0 text-success">
+                              {{ moisture }}
+                        </h5>
+                      {% elif moisture == "Not Adequate" %}
+                        <h5 class="font-weight-bolder mb-0 text-danger">
+                              {{ moisture }}
+                        </h5>
+                      {% else %}
+                        <h5 class="font-weight-bolder mb-0">
+                              Unknown
+                        </h5>
+                      {% endif %}
                     </div>
                   </div>
                   <div class="col-4 text-end">
@@ -317,12 +324,19 @@
                       <p class="text-sm mb-0 text-capitalize font-weight-bold">
                         Water Pump
                       </p>
-                      <h5 class="font-weight-bolder mb-0">
-                        2,300
-                        <span class="text-danger text-sm font-weight-bolder"
-                          >OFF</span
-                        >
-                      </h5>
+                      {% if pump == "ON" %}
+                        <h5 class="font-weight-bolder mb-0 text-success">
+                              {{ pump }}
+                        </h5>
+                      {% elif pump == "OFF" %}
+                        <h5 class="font-weight-bolder mb-0 text-danger">
+                              {{ pump }}
+                        </h5>
+                      {% else %}
+                        <h5 class="font-weight-bolder mb-0">
+                              Unknown
+                        </h5>
+                      {% endif %}
                     </div>
                   </div>
                   <div class="col-4 text-end">
@@ -381,9 +395,6 @@
                       </p>
                       <h5 class="font-weight-bolder mb-0">
                         {{"{0:0.1f}".format(hum) }}%
-                        <span class="text-success text-sm font-weight-bolder"
-                          >+5%</span
-                        >
                       </h5>
                     </div>
                   </div>
@@ -409,12 +420,12 @@
                   <div class="col-8">
                     <div class="numbers">
                       <p class="text-sm mb-0 text-capitalize font-weight-bold">
-                        Humidity
+                        Email
                       </p>
                       <h5 class="font-weight-bolder mb-0">
-                        {{"{0:0.1f}".format(hum) }}
+                        --
                         <span class="text-success text-sm font-weight-bolder"
-                          >+5%</span
+                          >--</span
                         >
                       </h5>
                     </div>
@@ -443,9 +454,9 @@
                         Rainfall Predicted
                       </p>
                       <h5 class="font-weight-bolder mb-0">
-                        $103,430
+                        --
                         <span class="text-danger text-sm font-weight-bolder"
-                          >NO</span
+                          >--</span
                         >
                       </h5>
                     </div>
