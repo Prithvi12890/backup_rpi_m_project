@@ -1,4 +1,7 @@
 from flask import Flask, request, render_template
+import time
+import datetime
+
 app = Flask(__name__)
 app.debug = True # Make this False if you are no longer debugging
 
@@ -19,17 +22,37 @@ def temp_hum():
 	else:
 		return render_template("no_sensor.html")
 
-@app.route("/temp_hum_db")
+@app.route("/temp_hum_db", methods=['GET'])
 def temp_hum_db():
-	import sqlite3
-	conn=sqlite3.connect('/var/www/major_project/app.db')
-	curs=conn.cursor()
-	curs.execute("SELECT * FROM temperatures")
-	temperatures = curs.fetchall()
-	curs.execute("SELECT * FROM humidities")
-	humidities = curs.fetchall()
-	conn.close()
-	return render_template("temp_hum_db.html",temp=temperatures,hum=humidities)
+    from_date_str = request.args.get('from', time.strftime("%Y-%m-%d 00:00"))
+    to_date_str = request.args.get('to', time.strftime("%Y-%m-%d %H:%M"))
+    if not validate_date(from_date_str):
+        from_date_str = time.strftime("%Y-%m-%d 00:00")
+    if not validate_date(to_date_str):
+        to_date_str = time.strftime("%Y-%m-%d %H:%M")
+    import sqlite3
+    conn=sqlite3.connect('/var/www/major_project/app.db')
+    curs=conn.cursor()
+	# curs.execute("SELECT * FROM temperatures")
+	# temperatures = curs.fetchall()
+	# curs.execute("SELECT * FROM humidities")
+	# humidities = curs.fetchall()
+	# conn.close()
+
+    curs.execute("SELECT * FROM temperatures WHERE rDatetime BETWEEN ? AND ? ORDER BY rDatetime DESC", (from_date_str, to_date_str))
+    temperatures = curs.fetchall()
+    curs.execute("SELECT * FROM humidities WHERE rDatetime BETWEEN ? AND ? ORDER BY rDatetime DESC", (from_date_str, to_date_str))
+    humidities = curs.fetchall()
+    conn.close()
+
+    return render_template("temp_hum_db.html",temp=temperatures,hum=humidities)
+
+def validate_date(d):
+    try:
+        datetime.datetime.strptime(d, "%Y-%m-%d %H:%M")
+        return True
+    except ValueError:
+        return False
 
 @app.route("/home")
 def temp_hum_ui_home():
@@ -37,7 +60,7 @@ def temp_hum_ui_home():
     import Adafruit_DHT
     humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 17)
     if humidity is not None and temperature is not None:
-        return render_template("dashboard.html",temp=temperature,hum=humidity,moisture=moisture_level, change=change_of_var)
+        return render_template("dashboard.html",temp=temperature,hum=humidity,moisture=moisture_level,pump=water_pump)
     else:
         return render_template("no_sensor.html")
 
@@ -45,9 +68,21 @@ def temp_hum_ui_home():
 def temp_hum_ui_home_dashboard():
     import sys
     import Adafruit_DHT
+    import sqlite3
+    conn=sqlite3.connect('/var/www/major_project/app.db')
+    curs=conn.cursor()
+    curs.execute("SELECT * FROM temperatures ORDER BY rDatetime DESC LIMIT 40")
+    temperatures = curs.fetchall()
+    curs.execute("SELECT * FROM humidities ORDER BY rDatetime DESC LIMIT 40")
+    humidities = curs.fetchall()
+    conn.close()
+    x_ticks = [record[0] for record in temperatures]
+    y_ticks1 = [record[2] for record in temperatures]
+    y_ticks2 = [record[2] for record in humidities]
     humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 17)
     if humidity is not None and temperature is not None:
-        return render_template("dashboard.html",temp=temperature,hum=humidity,moisture=moisture_level,pump=water_pump)
+        print(x_ticks)
+        return render_template("dashboard.html",temp=temperature,hum=humidity,moisture=moisture_level,pump=water_pump,labels=x_ticks,values1=y_ticks1,values2=y_ticks2)
     else:
         return render_template("no_sensor.html")
 
