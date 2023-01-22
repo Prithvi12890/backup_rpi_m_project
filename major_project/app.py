@@ -71,9 +71,9 @@ def temp_hum_ui_home_dashboard():
     import sqlite3
     conn=sqlite3.connect('/var/www/major_project/app.db')
     curs=conn.cursor()
-    curs.execute("SELECT * FROM temperatures ORDER BY rDatetime DESC LIMIT 40")
+    curs.execute("SELECT * FROM temperatures")
     temperatures = curs.fetchall()
-    curs.execute("SELECT * FROM humidities ORDER BY rDatetime DESC LIMIT 40")
+    curs.execute("SELECT * FROM humidities")
     humidities = curs.fetchall()
     conn.close()
     x_ticks = [record[0] for record in temperatures]
