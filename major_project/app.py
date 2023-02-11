@@ -112,12 +112,14 @@ GPIO.setup(26, GPIO.OUT)
 GPIO.setup(16,GPIO.IN)
 GPIO.setup(19,GPIO.OUT)
 
-if (GPIO.input(16)):
-    import os
-    GPIO.output(19,HIGH)
-    time.sleep(1)
-    GPIO.cleanup()
-    os.system("sudo shutdown -h now")
+# un-comment only before use or else, by default the system will shutdown soon as you start it as 16 is high if nothing is connected to it
+# if (GPIO.input(16)):
+    # import os
+    # GPIO.output(19,GPIO.HIGH)
+    # time.sleep(1)
+    # # GPIO.cleanup()
+    # print("shutdown requested")
+    # # os.system("sudo shutdown -h now")
 
 def callback(channel):
         global moisture_level, water_pump
