@@ -109,6 +109,15 @@ channel = 21
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(channel, GPIO.IN)
 GPIO.setup(26, GPIO.OUT)
+GPIO.setup(16,GPIO.IN)
+GPIO.setup(19,GPIO.OUT)
+
+if (GPIO.input(16)):
+    import os
+    GPIO.output(19,HIGH)
+    time.sleep(1)
+    GPIO.cleanup()
+    os.system("sudo shutdown -h now")
 
 def callback(channel):
         global moisture_level, water_pump
